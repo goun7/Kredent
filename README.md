@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/logo.svg" width="96" alt="Kredent logo"></p>
+
 # Kredent
 
 **Identity and verifiable reputation for autonomous agents.**
