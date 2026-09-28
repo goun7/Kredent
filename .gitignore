@@ -1,0 +1,22 @@
+# Kredent — private keys NEVER committed
+.kredent/
+**/seed*.hex
+**/*.seed
+**/private*.key
+**/*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# OS
+.DS_Store
+*.swp

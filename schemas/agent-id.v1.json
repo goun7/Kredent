@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://roboseal.org/schemas/v1/agent-id.json",
+  "title": "Roboseal AgentID v1.0",
+  "description": "Minimal, non-bloated, cryptographic decentralized identifier schema for autonomous software agents.",
+  "type": "object",
+  "required": ["$schema", "agent_id", "version", "created_at", "controller", "keys", "capabilities"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "agent_id": {
+      "type": "string",
+      "pattern": "^did:agent:68:key:[a-zA-Z0-9_-]+$"
+    },
+    "version": {
+      "type": "string",
+      "enum": ["1.0.0"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "controller": {
+      "type": "string",
+      "description": "Legal or operational entity responsible for this agent (e.g. did:legal:tr:vkn:1234567890 or did:web:acme.com)"
+    },
+    "keys": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["kid", "type", "public_key_multibase", "purposes", "revoked"],
+        "properties": {
+          "kid": { "type": "string" },
+          "type": { "type": "string", "enum": ["Ed25519VerificationKey2020"] },
+          "public_key_multibase": { "type": "string" },
+          "purposes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["call-signing", "commitment-assertion", "escrow-authorization", "audit-verify"]
+            }
+          },
+          "expires_at": { "type": ["string", "null"], "format": "date-time" },
+          "revoked": { "type": "boolean" }
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "attestations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "claim", "issuer", "sig"],
+        "properties": {
+          "type": { "type": "string" },
+          "claim": { "type": "string" },
+          "issuer": { "type": "string" },
+          "sig": { "type": "string" }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://roboseal.org/schemas/v1/calibration-event.json",
+  "title": "Roboseal CalibrationEvent v1.0",
+  "description": "Event schema for claims, affirmations, and contradictions in the CalibrationLedger.",
+  "type": "object",
+  "required": ["event_id", "agent_id", "event_type", "claim_ref", "evidence_hash", "timestamp"],
+  "properties": {
+    "event_id": { "type": "string" },
+    "agent_id": { "type": "string", "pattern": "^did:agent:68:key:[a-zA-Z0-9_-]+$" },
+    "event_type": { "type": "string", "enum": ["claim", "confirmation", "contradiction"] },
+    "claim_ref": { "type": "string" },
+    "evidence_hash": { "type": "string", "pattern": "^sha256:[a-fA-F0-9]{64}$" },
+    "challenger": { "type": "string" },
+    "arbitration_receipt": { "type": "string" },
+    "score_impact": { "type": "number" },
+    "timestamp": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

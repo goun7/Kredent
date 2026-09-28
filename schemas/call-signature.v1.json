@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://roboseal.org/schemas/v1/call-signature.json",
+  "title": "Roboseal CallSignature v1.0",
+  "description": "IETF RFC 9421 compatible HTTP signature wire payload metadata schema.",
+  "type": "object",
+  "required": ["agent_id", "kid", "method", "authority", "target_uri", "content_digest", "created", "signature"],
+  "properties": {
+    "agent_id": {
+      "type": "string",
+      "pattern": "^did:agent:68:key:[a-zA-Z0-9_-]+$"
+    },
+    "kid": {
+      "type": "string"
+    },
+    "method": {
+      "type": "string",
+      "enum": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]
+    },
+    "authority": {
+      "type": "string"
+    },
+    "target_uri": {
+      "type": "string",
+      "format": "uri"
+    },
+    "content_digest": {
+      "type": "string",
+      "pattern": "^sha-256=:[a-zA-Z0-9+/=]+:$"
+    },
+    "created": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "signature": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}
