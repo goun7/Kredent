@@ -67,6 +67,23 @@ proof pattern. Request-level authentication uses
 
 ---
 
+## In 30 seconds
+
+```bash
+pip install kredent
+
+kredent create --name billing-bot          # an agent gets a did:key identity
+kredent attest --name billing-bot \
+    --claim '{"action":"deployed","service":"billing-api"}' \
+    --out attestation.json                  # it signs a claim about what it did
+kredent verify attestation.json             # anyone checks it — offline, no registry
+```
+
+The verification above runs with no network and no account: the public key is
+recovered from the `did:key` inside the document, so the file is the only input.
+
+---
+
 ## Install
 
 ```bash
