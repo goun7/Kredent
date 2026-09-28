@@ -2,6 +2,11 @@
 
 # Kredent
 
+[![CI](https://github.com/goun7/Kredent/actions/workflows/ci.yml/badge.svg)](https://github.com/goun7/Kredent/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/kredent)](https://pypi.org/project/kredent/)
+[![Python](https://img.shields.io/pypi/pyversions/kredent)](https://pypi.org/project/kredent/)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+
 **Identity and verifiable reputation for autonomous agents.**
 
 Kredent gives a software agent a cryptographic identity it controls, lets it
@@ -331,4 +336,4 @@ reputation score as a decision-making oracle yet.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+Apache-2.0. See [LICENSE](LICENSE).
