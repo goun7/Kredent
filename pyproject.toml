@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "Identity and verifiable reputation for autonomous agents — W3C did:key, Ed25519 signed attestations, offline verification."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = { text = "Apache-2.0" }
 authors = [{ name = "Kredent Contributors" }]
 keywords = ["agent", "identity", "did", "did:key", "reputation", "attestation", "ed25519", "mcp"]
 classifiers = [
