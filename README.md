@@ -380,3 +380,39 @@ Apache-2.0. See [LICENSE](LICENSE).
 - **Privacy property**: Kredent's reputation is presented per-attribute
   — an agent proves a property about its history without exposing
   the whole history. Selective disclosure, not full exposure.
+
+### Current academic references (2024–2026)
+
+The patterns above, as they appear in the 2024–2026 literature:
+
+- **Lookup-private credential status verification (2026)** — Herbke,
+  Rieder, Sechting vd. *"ShadowPath: Lookup-Private Credential Status
+  Verification over Authenticated State."*
+  ([arXiv 2608.19937](https://arxiv.org/abs/2608.19937)):
+  checking whether a credential is still valid without the issuer
+  learning *who* is checking — Kredent's "verify without trusting the
+  issuer's word" property with the privacy half made explicit.
+- **Private credential inference (2026)** — Breckenridge, Vilardell,
+  Leung vd. *"$π$Creds: Privately Inferred Credentials."*
+  ([arXiv 2606.03771](https://arxiv.org/abs/2606.03771)): deriving a
+  credential's content without disclosing it — the
+  selective-disclosure primitive Kredent's per-attribute reputation
+  uses.
+- **Verifiable credentials in privacy-preserving federated analytics
+  (2026)** — Drăgnoiu & Olimid. *"On the Usage of Verifiable
+  Credentials in Privacy-Preserving Federated Analytics."*
+  ([arXiv 2609.33004](https://arxiv.org/abs/2609.33004)):
+  issuer/holder/verifier separation as it is applied when the holder
+  must not expose the underlying data.
+- **Verifiable provenance with limited disclosure via ZKPs (2026)** —
+  Hrabar, Arshadi Soufiani, Kim vd. *"OreProof: Verifiable Provenance
+  with Limited Disclosure for Critical-Minerals Supply Chains Using
+  Zero-Knowledge Proofs."*
+  ([arXiv 2609.00340](https://arxiv.org/abs/2609.00340)): prove a
+  chain-of-custody claim without revealing the custody history — the
+  shape of Kredent's reputation attestation.
+- **DIDs for agents (2026)** — Garzon, Vaziry, Kuzu, Gehrmann. *"AI
+  Agents with Decentralized Identifiers and Verifiable Credentials."*
+  ([DOI 10.5220/0014234400004052](https://doi.org/10.5220/0014234400004052),
+  ICAART): the issuer/holder/verifier pattern applied to autonomous
+  agents — the population Kredent attests to.
