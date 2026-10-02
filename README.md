@@ -354,3 +354,29 @@ reputation score as a decision-making oracle yet.
 ## License
 
 Apache-2.0. See [LICENSE](LICENSE).
+
+## Academic & technical references
+
+- **Verifiable credentials** — Kredent issues an agent a
+  cryptographic identity it controls, plus reputation others can
+  verify without trusting the issuer's word. This is the
+  verifiable-credentials pattern: issuer, holder, verifier —
+  the holder presents, the verifier checks, the issuer cannot
+  silently revoke what was already shown.
+- **Decentralized identifiers (DIDs)** — the identity primitive x402's
+  own ecosystem converged on:
+  [x402 #1777](https://github.com/x402-foundation/x402/issues/1777)
+  (agent-trust DID, 119 comments). Mesh implementation lives in
+  [63-Sester `sester/trust.py`](../63-Sester/sester/trust.py)
+  (`did:sester:` prefix, attestations, trust-tiered pricing).
+- **Reputation with wash-trade resistance** — a raw count of completed
+  transactions is gameable: two wallets under one party can settle
+  real value back and forth forever and manufacture "activity."
+  The countermeasure is diversity (distinct counterparties or
+  resources per transaction); see
+  [x402 #2833](https://github.com/x402-foundation/x402/issues/2833)
+  ("volume is not trust") and Sester's
+  [`wash_resistant_score`](../63-Sester/sester/reputation.py).
+- **Privacy property**: Kredent's reputation is presented per-attribute
+  — an agent proves a property about its history without exposing
+  the whole history. Selective disclosure, not full exposure.
