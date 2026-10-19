@@ -1,0 +1,34 @@
+# Smithery registry configuration — Kredent MCP server.
+#
+# Publishing (Smithery CLI, Node.js 20+):
+#   smithery mcp publish ./kredent.mcpb -n <org>/kredent
+# or the URL path (Streamable HTTP + OAuth) via https://smithery.ai/new
+#
+# Local trial (without a registry):
+#   smithery mcp add ./mcp/kredent_mcp.py --id kredent   # stdio, local
+#   smithery tool list kredent
+#   smithery tool call kredent reputation '{"agent_id":"did:key:z6Mk..."}'
+#
+# pip-install-edilince console script de kullanılabilir:
+#   pip install "kredent[mcp]"  →  kredent-mcp
+#
+# Docs: https://smithery.ai/docs  ·  MCP spec: https://modelcontextprotocol.io/specification/2025-06-18
+version: 1
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      kredent_home:
+        type: string
+        description: "Base directory for the local identity store (0600 files)"
+        default: ""
+  command: python
+  args:
+    - mcp/kredent_mcp.py
+  env:
+    KREDENT_HOME:
+      description: "Base directory for the local identity store. Empty = platform default."
+      default: ""
+      required: false

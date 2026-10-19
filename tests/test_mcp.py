@@ -14,6 +14,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -286,3 +287,107 @@ def test_mcp_unknown_tool_returns_an_error_result_not_a_crash(tmp_path):
     finally:
         proc.terminate()
         proc.wait(timeout=10)
+
+# ---------------------------------------------------------------------------
+# ROBOSEAL-G7 (gece-turu 2026-10-19): registry-dosyalari + console-script pin
+#
+# mcp/README.md, mcp/REGISTRIES.md, mcp/mcp.json ve mcp/smithery.yaml
+# "kayit-hazir, onay-bekliyor" dokumanlari. Icerdikleri her SOZLEISME gercek
+# sunucu ciktilariyla capraz-olculur - dokuman soyut soz veremesin.
+# Konsol script'i (kredent-mcp) yalnizca kurulursa olcer; kurulmadiysa
+# kayitsiz gecer (CI'da pip-without-extras durumu).
+# ---------------------------------------------------------------------------
+MCP_DIR = ROOT / "mcp"
+
+_TOOLS_IN_MCP_JSON = ["create_identity", "attest", "verify", "reputation"]
+
+
+def _mcp_json():
+    return json.loads((MCP_DIR / "mcp.json").read_text(encoding="utf-8"))
+
+
+def _regs():
+    return (MCP_DIR / "REGISTRIES.md").read_text(encoding="utf-8")
+
+
+def test_mcp_json_manifest_matches_the_live_server(tmp_path):
+    """mcp/mcp.json'daki tool-adlari + transport gercek sunucuyla ayni."""
+    manifest = _mcp_json()
+    assert manifest["transport"] == "stdio"
+    proc = _spawn_server(tmp_path)
+    try:
+        client = _Client(proc)
+        client._send("initialize", {"protocolVersion": "2025-06-18",
+                                    "capabilities": {},
+                                    "clientInfo": {"name": "pin", "version": "0"}})
+        client._send("notifications/initialized", is_notif=True)
+        listed = client._send("tools/list", {})
+        live_names = [t["name"] for t in listed["result"]["tools"]]
+    finally:
+        proc.terminate()
+        proc.wait(timeout=10)
+    doc_names = [t["name"] for t in manifest["tools"]]
+    assert sorted(doc_names) == sorted(live_names)
+    assert sorted(doc_names) == sorted(_TOOLS_IN_MCP_JSON)
+
+
+def test_mcp_json_install_and_privacy_claims_are_self_consistent():
+    """install.command + privacy keys icerigi pyproject'le capraz-olculur."""
+    manifest = _mcp_json()
+    pyproj = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert manifest["install"]["command"] == "kredent-mcp"
+    assert 'kredent-mcp = "kredent.mcp_server:main"' in pyproj
+    priv = manifest["privacy"]
+    assert "0600" in priv["keys"]
+    assert priv["network"].strip().lower().startswith("none")
+
+
+def test_registries_md_states_no_registration_done_honestly():
+    """REGISTRIES.md onay-bekliyor diyor - "yayinlandi" demiyor."""
+    text = _regs()
+    assert "Kay\u0131t YAPILMADI" in text
+    assert "Kullan\u0131c\u0131 onay" in text  # t\u00fcrk\u00e7e: "kullan\u0131c\u0131 onay\u0131"
+    for bad in ("Smithery'de yay\u0131nland\u0131", "Glama'da listelendi"):
+        assert bad not in text
+
+
+def test_mcp_readme_handshake_command_is_reproducible():
+    """mcp/README.md'nin komutu birebir calistirilabilir - protokol surumu
+    sunucu summary'siyle ayni."""
+    text = (MCP_DIR / "README.md").read_text(encoding="utf-8")
+    assert "2025-06-18" in text  # README k\u0131sa-yolunu ve MCPB manifest\u0131 de ayn\u0131 s\u00fcr\u00fcm\u00fc kullan\u0131r
+    assert SERVER_NAME in text or "kredent" in text
+    # guvenlik-sozu: seed yalnizca persist=false ile doner
+    assert "persist: false" in text
+
+
+def test_kredent_mcp_runner_resolves_the_real_package(tmp_path):
+    """mcp/kredent_mcp.py basit bir runpy-Runner - importurunu yapip
+    modulu uretemezse RFC'den-farkli bir sey olmus demektir."""
+    runner = MCP_DIR / "kredent_mcp.py"
+    assert runner.is_file()
+    src = runner.read_text(encoding="utf-8")
+    assert "kredent.mcp_server" in src
+
+
+@pytest.mark.skipif(shutil.which("kredent-mcp") is None,
+                    reason="kredent-mcp console script bu ortamda kurulu degil")
+def test_console_script_handshake_when_installed(tmp_path):
+    """pyproject'in sozverdigi kredent-mcp console script'i gercek stdio
+    el-sikismasi yapabiliyor (pip install -e . ile kurulursa)."""
+    env = dict(os.environ)
+    env["KREDENT_HOME"] = str(tmp_path / "home")
+    proc = subprocess.run(
+        [shutil.which("kredent-mcp"), "-"],
+        input=json.dumps({"jsonrpc": "2.0", "id": 1, "method": "initialize",
+                          "params": {"protocolVersion": "2025-06-18",
+                                     "capabilities": {},
+                                     "clientInfo": {"name": "pin", "version": "0"}}}) + "\n",
+        capture_output=True, text=True, timeout=60, env=env, cwd=str(ROOT),
+        check=False,
+    )
+    assert proc.returncode in (0, None), proc.stderr[:200]
+    line = proc.stdout.splitlines()[0]
+    data = json.loads(line)
+    assert data["result"]["serverInfo"]["name"] == SERVER_NAME
+    assert data["result"]["protocolVersion"] == "2025-06-18"

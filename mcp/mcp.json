@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0.0",
+  "name": "kredent",
+  "display_name": "Kredent — Agent Identity & Reputation",
+  "description": "Issues and verifies agent identity and signed attestations (W3C did:key, Ed25519 over JCS-canonical RFC 8785), and computes auditable reputation scores. Identity is self-resolving (no registry, no network) and attestation verification is fully offline. Seeds are persisted locally at 0600 and never returned over the transport unless persist=false is requested.",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/goun7/Kredent",
+  "repository": "https://github.com/goun7/Kredent",
+  "categories": ["security", "developer-tools", "autonomous-agents"],
+  "transport": "stdio",
+  "install": {
+    "command": "kredent-mcp",
+    "args": [],
+    "env": {
+      "KREDENT_HOME": {
+        "description": "Base directory for the local identity store. Defaults to the platform data dir; identities are stored with 0600 permissions.",
+        "required": false
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "create_identity",
+      "description": "Generate an Ed25519 keypair and publish a self-resolving did:key identity. Persisted locally by default; the seed is returned only with persist=false."
+    },
+    {
+      "name": "attest",
+      "description": "Sign a claim with the agent's key, producing a self-contained, offline-verifiable attestation."
+    },
+    {
+      "name": "verify",
+      "description": "Independently verify a Kredent attestation offline: Ed25519 signature, did:key binding, content-addressed id, expiry."
+    },
+    {
+      "name": "reputation",
+      "description": "Compute an agent's reputation score from a ledger of events. Deterministic function of public events — recomputable and auditable by anyone."
+    }
+  ],
+  "privacy": {
+    "keys": "Ed25519 seeds are generated locally and stored at 0600. Only the public half ever appears in an identity document or attestation. A seed is returned over the transport ONLY when persist=false is explicitly requested.",
+    "network": "None. did:key is self-resolving and attestation verification is offline by design; the server connects to nothing."
+  }
+}
