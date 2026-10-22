@@ -382,8 +382,20 @@ def test_now_iso_parses_with_isoformat():
     ORTAM-OGRENDI-5: Python 3.11+ 'Z' son-ekini tzinfo=UTC olarak yorumlar;
     3.10'da 'Z' reddedilirdi. requires-python >=3.10 oldugu icin bu test
     ciktiyi sadece gecerli tarih oldugunu dogrular.
+
+    G48-2026-10-22: CI 3.10-bacaginda `fromisoformat('...Z')` ValueError
+    firlatiyordu ( bu-test False-KIRMIZI). Cozum: 3.10'da eski-davranis
+    dogrulanir ( 'Z'-reddi-bilincli-tolerans), 3.11+'da tzinfo=UTC.
     """
     s = _now_iso()
-    parsed = datetime.fromisoformat(s)
-    assert parsed.tzinfo is timezone.utc
-    assert parsed.year >= 2026
+    if sys.version_info >= (3, 11):
+        parsed = datetime.fromisoformat(s)
+        assert parsed.tzinfo is timezone.utc
+        assert parsed.year >= 2026
+    else:
+        # 3.10: 'Z' reddedilir; '+00:00'-cevirimi kullanilmali.
+        with pytest.raises(ValueError):
+            datetime.fromisoformat(s)
+        parsed = datetime.fromisoformat(s.replace("Z", "+00:00"))
+        assert parsed.tzinfo is timezone.utc
+        assert parsed.year >= 2026

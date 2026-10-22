@@ -41,6 +41,11 @@ mcp = [
 ]
 dev = [
     "pytest>=8.0.0",
+    # G48-2026-10-22: tests/test_mcp.py kredent.mcp_server'i import eder, o da
+    # mcp.types/mcp.server'i lazy-import eder. CI `pip install -e ".[dev]"`
+    # kurdugu icin mcp-paketi-YOKSA ModuleNotFoundError -> "server closed
+    # stdout" ( 3-python-matrixinin-tamaminda). MCP-ekstrasini-dev'e-kat.
+    "mcp>=1.0.0",
 ]
 
 [project.scripts]
