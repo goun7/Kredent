@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import re
 import secrets
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional, Union
@@ -322,6 +323,14 @@ def _parse_iso(ts: str) -> datetime:
     text = ts.strip()
     if text.endswith("Z"):
         text = text[:-1] + "+00:00"
+    # G48-2026-10-22: Python-3.10-fromisoformat-kesirli-saniyeyi-sadece-3-ya-da
+    # 6-haneli-kabul-eder ( '2023-01-01T00:00:00.5'-ValueError). Oncesi-tasarim
+    # CI 3.10-bacaginda-patliyordu. Cozum: kesirli-kismi-6-haneye-tamamla.
+    m = re.search(r"\.(\d+)(?=[+-]\d\d:?\d\d$|$)", text)
+    if m and len(m.group(1)) not in (3, 6):
+        kesir = m.group(1)
+        yeni = kesir.ljust(6, "0")[:6]
+        text = text[: m.start(1)] + yeni + text[m.end(1):]
     dt = datetime.fromisoformat(text)
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
