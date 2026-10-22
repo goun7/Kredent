@@ -326,7 +326,7 @@ pip install -e ".[dev]"
 pytest
 ```
 
-1.321 tests passed, 0 failed rc=0 (LEED-ölçümü 2026-10-19, `pytest tests/`), covering the attestation lifecycle, every forgery path, did:key
+1.322 tests passed, 0 failed rc=0 (LEED-ölçümü 2026-10-23, `pytest tests/`), covering the attestation lifecycle, every forgery path, did:key
 round-tripping, JCS determinism, reputation math and anti-gaming filters, the
 CLI as real subprocesses, and the MCP server over an actual JSON-RPC stdio
 session.
